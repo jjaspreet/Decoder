@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/app_bar_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="Search"
+        app:showAsAction="ifRoom|withText"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+    <item
+        android:id="@+id/item1"
+        android:title="Sort by language"
+        app:showAsAction="never">
+
+        <menu>
+            <item
+                android:id="@+id/java"
+                android:title="Java"
+                />
+
+            <item
+                android:id="@+id/css"
+                android:title="CSS"
+                />
+
+            <item
+                android:id="@+id/python"
+                android:title="Python" />
+
+
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/files"
+        android:title="Sort by Files"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/projects"
+        android:title="Sort by Projects"
+        app:showAsAction="never"/>
+
+</menu>
