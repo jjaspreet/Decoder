@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.dcoderproject.R;
 
+import dagger.android.AndroidInjection;
+
 public abstract class BaseActivity<T extends BaseViewModel> extends AppCompatActivity {
 
     public T viewModel;
@@ -35,8 +37,8 @@ public abstract class BaseActivity<T extends BaseViewModel> extends AppCompatAct
 
     }
 
-    public void inject(){
-//        AndroidInjection.inject(this);
+    public void inject() {
+        AndroidInjection.inject(this);
     }
 
     @LayoutRes
@@ -45,7 +47,7 @@ public abstract class BaseActivity<T extends BaseViewModel> extends AppCompatAct
     /**
      * override viewmodel
      */
-    public abstract T initViewModel() ;
+    public abstract T initViewModel();
 
     /**
      * override view
@@ -58,8 +60,8 @@ public abstract class BaseActivity<T extends BaseViewModel> extends AppCompatAct
     public abstract void handlerViewModel();
 
     /*
-    * handling the clicks
-    * */
+     * handling the clicks
+     */
 
     public abstract void handleClicks();
 
@@ -67,13 +69,7 @@ public abstract class BaseActivity<T extends BaseViewModel> extends AppCompatAct
         loadingLayout.setVisibility(View.VISIBLE);
     }
 
-   public void hideLoading() {
+    public void hideLoading() {
         loadingLayout.setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
     }
 }

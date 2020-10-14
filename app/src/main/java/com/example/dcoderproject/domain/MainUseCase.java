@@ -26,7 +26,7 @@ public class MainUseCase {
         return repository.getDataFromServer(pageNumber)
                 .map(new Function<List<Info.Data>, List<InfoEntity>>() {
                     @Override
-                    public List<InfoEntity> apply(List<Info.Data> data) throws Exception {
+                    public List<InfoEntity> apply(List<Info.Data> data) {
                         List<InfoEntity> infoEntityList = new ArrayList<>();
                         for (Info.Data entity : data) {
                             InfoEntity infoEntity = new InfoEntity();
