@@ -25,6 +25,7 @@ public class MainViewModel extends BaseViewModel {
     public static final String TAG = "ABC";
 
     public MutableLiveData<NetworkState<List<InfoEntity>>> liveData = new MutableLiveData<>();
+    public MutableLiveData<NetworkState<List<InfoEntity>>> dbliveData = new MutableLiveData<>();
     private MainUseCase mainUseCase;
 
     @Inject
@@ -47,6 +48,7 @@ public class MainViewModel extends BaseViewModel {
 
                     @Override
                     public void onSuccess(List<InfoEntity> infoEntities) {
+                        liveData.setValue(new NetworkState<List<InfoEntity>>(Status.SUCCESS, infoEntities, null));
 
                         Log.d(TAG, "onSuccess: " + infoEntities);
                     }
@@ -55,24 +57,43 @@ public class MainViewModel extends BaseViewModel {
                     public void onError(Throwable e) {
 
                         Log.e(TAG, "onError: ", e);
+                        liveData.setValue(new NetworkState<List<InfoEntity>>(Status.FAILED, null, e));
                     }
                 });
-               /* .subscribe(new SingleObserver<List<InfoEntity>>() {
+    }
+
+    public void getdataFromDb(){
+        mainUseCase.getdataFromDb()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<InfoEntity>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        
                     }
 
                     @Override
                     public void onSuccess(List<InfoEntity> infoEntities) {
+
+
+                        dbliveData.setValue(new NetworkState<List<InfoEntity>>(Status.SUCCESS, infoEntities, null));
+
                         Log.d(TAG, "onSuccess: " + infoEntities);
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e(TAG, "onError: ", e);
+
+                        dbliveData.setValue(new NetworkState<List<InfoEntity>>(Status.SUCCESS, null, e));
                     }
-                });*/
-//        compositeDisposable.add(disposable);
+                });
+    }
+
+    public void insertDataToDatabase(InfoEntity infoEntity){
+        mainUseCase.insertDataToDatabase(infoEntity);
+    }
+
+    public void clearDb(){
+        mainUseCase.clearDb();
     }
 }

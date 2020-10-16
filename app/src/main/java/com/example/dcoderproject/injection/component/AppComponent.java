@@ -5,6 +5,7 @@ import com.example.dcoderproject.DecoderApplication;
 import com.example.dcoderproject.injection.module.ActivityModule;
 import com.example.dcoderproject.injection.module.AppModule;
 import com.example.dcoderproject.injection.module.NetworkModule;
+import com.example.dcoderproject.injection.module.StorageModule;
 import com.example.dcoderproject.injection.module.ViewModelModule;
 
 import javax.inject.Singleton;
@@ -18,6 +19,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
         NetworkModule.class,
         ViewModelModule.class,
         ActivityModule.class,
+        StorageModule.class,
         AndroidSupportInjectionModule.class})
 public interface AppComponent {
 

@@ -41,4 +41,16 @@ public class MainUseCase {
                     }
                 });
     }
+
+    public Single<List<InfoEntity>> getdataFromDb(){
+        return repository.getdataFromDb();
+    }
+
+    public void insertDataToDatabase(InfoEntity infoEntity){
+         repository.insertDataToDatabase(infoEntity);
+    }
+
+    public void clearDb(){
+         repository.deleteAllInfoFromDb();
+    }
 }

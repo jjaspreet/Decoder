@@ -31,6 +31,22 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
         this.infoFilteredList = new ArrayList<>(infoList);
     }
 
+    public static class InfoViewHolder extends RecyclerView.ViewHolder{
+    private TextView username, title, description, starRating,forkRating , imageInitialTextView;
+
+    public InfoViewHolder(@NonNull View itemView) {
+        super(itemView);
+
+
+        username = itemView.findViewById(R.id.usernameTextView);
+        title = itemView.findViewById(R.id.titleTextView);
+        description = itemView.findViewById(R.id.descriptionTextView);
+        starRating = itemView.findViewById(R.id.starRatingTextView);
+        forkRating = itemView.findViewById(R.id.forkRatingTextView);
+        imageInitialTextView = itemView.findViewById(R.id.imageInitialTextView);
+    }
+}
+
     @NonNull
     @Override
     public InfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -69,24 +85,6 @@ public class InfoAdapter extends RecyclerView.Adapter<InfoAdapter.InfoViewHolder
     public Filter getFilter() {
         return infoFilter;
     }
-
-    public static class InfoViewHolder extends RecyclerView.ViewHolder{
-
-        private TextView username, title, description, starRating,forkRating , imageInitialTextView;
-
-        public InfoViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-
-            username = itemView.findViewById(R.id.usernameTextView);
-            title = itemView.findViewById(R.id.titleTextView);
-            description = itemView.findViewById(R.id.descriptionTextView);
-            starRating = itemView.findViewById(R.id.starRatingTextView);
-            forkRating = itemView.findViewById(R.id.forkRatingTextView);
-            imageInitialTextView = itemView.findViewById(R.id.imageInitialTextView);
-        }
-    }
-
     private Filter infoFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {

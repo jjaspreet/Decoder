@@ -2,6 +2,8 @@ package com.example.dcoderproject.injection.module;
 
 import com.example.dcoderproject.DecoderApplication;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,9 +17,13 @@ public class AppModule {
       this.application = application;
     }
 
+    @Provides
+    @Singleton
     public DecoderApplication provideMySafetipinApp(){
         return application;
     }
+
+
 
     @Provides
     static String getName(){

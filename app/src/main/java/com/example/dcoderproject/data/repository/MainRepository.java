@@ -1,7 +1,9 @@
 package com.example.dcoderproject.data.repository;
 
 import com.example.dcoderproject.data.api.ApiInterface;
+import com.example.dcoderproject.data.database.dao.InfoDao;
 import com.example.dcoderproject.data.model.Info;
+import com.example.dcoderproject.data.model.InfoEntity;
 
 import java.util.List;
 
@@ -14,10 +16,14 @@ import io.reactivex.schedulers.Schedulers;
 public class MainRepository {
 
     private ApiInterface apiInterface;
+    private InfoDao infoDao;
+
+
 
     @Inject
-    public MainRepository(ApiInterface apiInterface) {
+    public MainRepository(ApiInterface apiInterface, InfoDao infoDao) {
         this.apiInterface = apiInterface;
+        this.infoDao = infoDao;
     }
 
     public Single<List<Info.Data>> getDataFromServer(int pageNumber){
@@ -30,6 +36,20 @@ public class MainRepository {
                         return data;
                     }
                 });
+    }
+
+
+    public Single<List<InfoEntity>> getdataFromDb(){
+        return infoDao.getAllAudits();
+    }
+
+    public void insertDataToDatabase(InfoEntity infoEntity){
+        infoDao.insert(infoEntity);
+
+    }
+
+    public void deleteAllInfoFromDb(){
+        infoDao.deleteAll();
     }
 
 }

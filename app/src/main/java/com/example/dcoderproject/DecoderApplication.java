@@ -12,8 +12,6 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
-import io.reactivex.functions.Consumer;
-import io.reactivex.plugins.RxJavaPlugins;
 
 public class DecoderApplication extends Application implements HasActivityInjector {
 

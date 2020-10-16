@@ -7,7 +7,7 @@ import com.example.dcoderproject.data.database.dao.InfoDao;
 import com.example.dcoderproject.data.model.Info;
 import com.example.dcoderproject.data.model.InfoEntity;
 
-@Database(entities = {InfoEntity.class}, version = 3)
+@Database(entities = {InfoEntity.class}, version = 5)
 public abstract class InfoDataBase extends RoomDatabase {
 
    public abstract InfoDao infoDao();

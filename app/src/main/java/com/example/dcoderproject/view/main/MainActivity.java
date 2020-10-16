@@ -9,6 +9,8 @@ import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,7 +23,9 @@ import com.example.dcoderproject.data.model.Info;
 import com.example.dcoderproject.data.model.InfoEntity;
 import com.example.dcoderproject.injection.factory.DaggerViewModelFactory;
 import com.example.dcoderproject.view.base.BaseActivity;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +41,14 @@ public class MainActivity extends BaseActivity<MainViewModel> {
     private InfoAdapter infoAdapter;
     private Info infoList;
     private List<InfoEntity> dataList = new ArrayList<>();
+    private List<InfoEntity> dbList = new ArrayList<>();
     private int pageNumber = 1;
     private int lastPage = 7;
     private LinearLayoutManager layoutManager;
     private ProgressBar progressBar, showLoadMoreProgressBar;
+    private CoordinatorLayout coordinatorLayout;
     private boolean isLoading, isLastPage;
+    private SearchView searchView;
 
     @Override
     public Integer getLayoutRes() {
@@ -58,22 +65,27 @@ public class MainActivity extends BaseActivity<MainViewModel> {
 
     @Override
     public void initView() {
-        findViewById(R.id.mainLayout).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewModel.getDataFromServer(1);
-            }
-        });
-//        recyclerView = findViewById(R.id.recyclerView);
-//        showLoadMoreProgressBar = findViewById(R.id.loadMoreProgressBar);
-//
-//        layoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(layoutManager);
-//
-//        infoAdapter = new InfoAdapter(this, dataList);
-//        recyclerView.setAdapter(infoAdapter);
-//
-//        viewModel.getDataFromServer(pageNumber);
+        recyclerView = findViewById(R.id.recyclerView);
+        showLoadMoreProgressBar = findViewById(R.id.loadMoreProgressBar);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        //setting the title
+        toolbar.setTitle("My Toolbar");
+
+        //placing toolbar in place of actionbar
+        setSupportActionBar(toolbar);
+
+        coordinatorLayout = findViewById(R.id.coordinateLayout);
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        infoAdapter = new InfoAdapter(this, dataList);
+        recyclerView.setAdapter(infoAdapter);
+
+        viewModel.getDataFromServer(pageNumber);
     }
 
     @Override
@@ -83,14 +95,53 @@ public class MainActivity extends BaseActivity<MainViewModel> {
             @Override
             public void onChanged(NetworkState<List<InfoEntity>> listNetworkState) {
                 if (listNetworkState.getStatus().equals(Status.RUNNING)) {
-//                    showLoading();
+                    showLoading();
+                }
 
-                } else if (listNetworkState.getStatus().equals(Status.SUCCESS)) {
-//                    hideLoading();
+                if (listNetworkState.getStatus().equals(Status.SUCCESS)) {
+                    hideLoading();
+                    viewModel.clearDb();
+                    hideLoadMoreProgressBar();
                     dataList.addAll(listNetworkState.getData());
+                    for(InfoEntity infoEntity : dataList){
+                        viewModel.insertDataToDatabase(infoEntity);
+                    }
                     infoAdapter.notifyDataSetChanged();
-                } else if (listNetworkState.getStatus().equals(Status.FAILED)) {
-//                    hideLoading();
+                }
+
+                if (listNetworkState.getStatus().equals(Status.FAILED)) {
+                    hideLoading();
+                    viewModel.getdataFromDb();
+                    if(listNetworkState.getError() instanceof UnknownHostException){
+                        Snackbar snackbar = Snackbar
+                                .make(coordinatorLayout, "No Internet Connection", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                    }
+
+
+                    Log.d(TAG, "onError: ");
+                }
+            }
+        });
+
+        viewModel.dbliveData.observe(this, new Observer<NetworkState<List<InfoEntity>>>() {
+            @Override
+            public void onChanged(NetworkState<List<InfoEntity>> listNetworkState) {
+
+                if (listNetworkState.getStatus().equals(Status.RUNNING)) {
+                    showLoading();
+                }
+
+                if (listNetworkState.getStatus().equals(Status.SUCCESS)) {
+                    hideLoading();
+                    hideLoadMoreProgressBar();
+                    dbList.addAll(listNetworkState.getData());
+                    dataList.addAll(dbList);
+                    infoAdapter.notifyDataSetChanged();
+                }
+
+                if (listNetworkState.getStatus().equals(Status.FAILED)) {
+                    hideLoading();
                     Log.d(TAG, "onError: ");
                 }
             }
@@ -100,45 +151,39 @@ public class MainActivity extends BaseActivity<MainViewModel> {
     @Override
     public void handleClicks() {
 
-//        recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
-//            @Override
-//            protected void loadMoreItems() {
-//                if (dataList.size() > 9) {
-//                    showLoadMoreProgressBar();
-//                    viewModel.getDataFromServer(pageNumber++);
-//                }
-//            }
-//
-//            @Override
-//            public boolean isLastPage() {
-//                return isLastPage;
-//            }
-//
-//            @Override
-//            public boolean isLoading() {
-//                return isLoading;
-//            }
-//        });
-//
+        recyclerView.addOnScrollListener(new PaginationScrollListener(layoutManager) {
+            @Override
+            protected void loadMoreItems() {
+                if (dataList.size() > 9) {
+                    showLoadMoreProgressBar();
+                    viewModel.getDataFromServer(pageNumber++);
+                }
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
-        MenuItem searchViewItem = menu.findItem(R.id.app_bar_search);
+        MenuItem searchViewItem = menu.findItem(R.id.search);
         final SearchView searchView = (SearchView) searchViewItem.getActionView();
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
-              /*  if(contactLists.contains(query)){
-                    adapter.getFilter().filter(query);
-                }else{
-                    Toast.makeText(SampleActivity.this, "No Match found",Toast.LENGTH_LONG).show();
-                }*/
                 return false;
-
             }
 
             @Override
@@ -182,10 +227,10 @@ public class MainActivity extends BaseActivity<MainViewModel> {
     }
 
     private void showLoadMoreProgressBar() {
-//        showLoadMoreProgressBar.setVisibility(View.VISIBLE);
+        showLoadMoreProgressBar.setVisibility(View.VISIBLE);
     }
 
     private void hideLoadMoreProgressBar() {
-//        showLoadMoreProgressBar.setVisibility(View.GONE);
+        showLoadMoreProgressBar.setVisibility(View.GONE);
     }
 }

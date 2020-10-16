@@ -27,6 +27,8 @@ public class StorageModule {
                 .build();
     }
 
+    @Provides
+    @Singleton
     public InfoDao provideInfoDao(InfoDataBase infoDataBase){
         return infoDataBase.infoDao();
     }
